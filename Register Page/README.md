@@ -12,7 +12,9 @@ The full How-to can be found at https://docs.aws.amazon.com/cognito/latest/devel
 
 
 
-https://unsplash.com/s/photos/login
+
+
+
 
 
 

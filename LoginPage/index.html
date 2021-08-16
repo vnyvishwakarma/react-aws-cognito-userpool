@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+	<!-- Javascript SDKs-->
+	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script> 
+	<script src="js/amazon-cognito-auth.min.js"></script>
+	<script src="https://sdk.amazonaws.com/js/aws-sdk-2.7.16.min.js"></script> 
+	<script src="js/amazon-cognito-identity.min.js"></script>   
+	<script src="js/config.js"></script>
+  <link rel="stylesheet" href="css/style.css">
+
+  </head>
+  <body background="https://images.unsplash.com/photo-1493723843671-1d655e66ac1c?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NDN8fGxvZ2lufGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60">
+    <form>
+      <h1>Please sign in</h1>
+
+      <input type="text" id="inputUsername"  placeholder="Email address" name="username" required autofocus>
+      <input type="password" id="inputPassword"  placeholder="Password" name="password" required>    
+      <button type="button" onclick="signInButton()">Sign in</button>
+
+    </form>
+    <p ><a href="register.html">Click Here to Register</a></p>
+<div id="flightsearch">
+
+
+  From: <input type="text" id="fromtext" value="type here">
+  to: <input type="text" id="fromto" value="type here">
+  Price: <input type="text" id="myText" value="0">
+  
+  <p>Click the button to search the price of flight</p>
+  
+  <button onclick="myFunction()">find my price</button>
+  
+  <script>
+  function myFunction() {
+    
+  
+    var from = document.getElementById("fromtext").value;
+    var to = document.getElementById("fromto").value;
+  
+   
+  
+    var request_json={"from":from,"to":to};
+  
+    var jsonPayLoad=JSON.stringify(request_json); 
+  
+  
+  
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      
+      document.getElementById("myText").value = this.responseText;
+  
+    }
+  };
+  xhttp.open("POST", "https://172ka6pdu6.execute-api.eu-west-1.amazonaws.com/test/search", true);
+  xhttp.setRequestHeader("Content-type", "application/json");
+  
+  xhttp.send(jsonPayLoad);
+  
+  }
+  </script>
+  
+
+
+</div>
+
+<script>
+
+  function signInButton() {
+    
+	var authenticationData = {
+        Username : document.getElementById("inputUsername").value,
+        Password : document.getElementById("inputPassword").value,
+    };
+	
+    var authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
+    
+	var poolData = {
+        UserPoolId : _config.cognito.userPoolId, // Your user pool id here
+        ClientId : _config.cognito.clientId, // Your client id here
+    };
+	
+    var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+	
+    var userData = {
+        Username : document.getElementById("inputUsername").value,
+        Pool : userPool,
+    };
+	
+    var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+    
+	cognitoUser.authenticateUser(authenticationDetails, {
+        onSuccess: function (result) {
+			var accessToken = result.getAccessToken().getJwtToken();
+			console.log(accessToken);	
+      document.getElementById("flightsearch").style.display = "block";
+
+        },
+
+        onFailure: function(err) {
+            alert(err.message || JSON.stringify(err));
+        },
+    });
+  }
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
